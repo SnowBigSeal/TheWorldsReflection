@@ -20,10 +20,10 @@
   "continents": {
     "continents_scale": 0.05,
     "erosion_scale": 0.08,
-    "flat_terrain_skew": 0.2,
+    "flat_terrain_skew": 0.5,
     "jungle_pillars": true,
     "ocean_offset": -0.8,
-    "ridge_scale": 0.25,
+    "ridge_scale": 0.05,
     "river_ice": false,
     "river_lanterns": false,
     "rolling_hills": true,
