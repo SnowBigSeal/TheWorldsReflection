@@ -31,14 +31,14 @@
   },
   "general": {
     "mod_enabled": true,
-    "snow_start_offset": 256
+    "snow_start_offset": 99999
   },
   "global_terrain": {
     "elevation_boost": 0.0,
     "lava_tunnels": false,
     "max_y": 512,
     "min_y": -96,
-    "ultrasmooth": false,
+    "ultrasmooth": true,
     "vertical_scale": 1.94
   },
   "islands": {
