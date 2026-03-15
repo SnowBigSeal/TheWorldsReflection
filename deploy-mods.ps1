@@ -1,6 +1,5 @@
 # deploy-mods.ps1
-# Copies the latest built JAR from each custom mod into the modpack's mods/ folder.
-# Run this after building any mod with .\gradlew build.
+# Builds each custom mod with Gradle, then copies the resulting JAR into the modpack's mods/ folder.
 
 $scriptDir = $PSScriptRoot
 $modsDir   = Join-Path $scriptDir "mods"
@@ -18,14 +17,25 @@ if (-not (Test-Path $modsDir)) {
 $anyFailed = $false
 
 foreach ($rel in $modProjects) {
-    $libsDir = Join-Path $scriptDir "$rel\build\libs"
-    $libsDir = [System.IO.Path]::GetFullPath($libsDir)
+    $projectDir = [System.IO.Path]::GetFullPath((Join-Path $scriptDir $rel))
 
-    if (-not (Test-Path $libsDir)) {
-        Write-Warning "[$rel] build\libs not found - skipping (run .\gradlew build first)"
+    if (-not (Test-Path $projectDir)) {
+        Write-Warning "[$rel] Project directory not found - skipping"
         $anyFailed = $true
         continue
     }
+
+    # Build the mod
+    Write-Host "[$rel] Building..." -ForegroundColor Cyan
+    $gradlew = Join-Path $projectDir "gradlew.bat"
+    & $gradlew -p $projectDir build --quiet
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "[$rel] Build failed (exit code $LASTEXITCODE) - skipping"
+        $anyFailed = $true
+        continue
+    }
+
+    $libsDir = Join-Path $projectDir "build\libs"
 
     # Pick the main JAR: exclude -sources, -javadoc, -all, -dev suffixes
     $jar = Get-ChildItem -Path $libsDir -Filter "*.jar" |
@@ -49,5 +59,6 @@ foreach ($rel in $modProjects) {
 
 if ($anyFailed) {
     Write-Host ""
-    Write-Warning "One or more mods were skipped. Build them with .\gradlew build and re-run this script."
+    Write-Warning "One or more mods failed to build or were skipped."
+    exit 1
 }
