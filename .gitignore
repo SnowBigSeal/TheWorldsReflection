@@ -1,0 +1,24 @@
+.mixin.out
+.idea
+.probe
+.vscode
+
+# KubeJS editor config files
+kubejs/client_scripts/jsconfig.json
+kubejs/startup_scripts/jsconfig.json
+kubejs/server_scripts/jsconfig.json
+kubejs/config/probe-settings.json
+
+# Batch files
+*.bat
+
+# FTB Quests lang files
+config/ftbquests/quests/lang/*.snbt
+config/ftbquests/quests/lang/recovery/*.snbt
+config/ftbquests/quests/lang/**/*.snbt_merged
+
+# Mod JARs (managed externally via modpack manifest)
+mods/
+
+# Local overrides
+local/
