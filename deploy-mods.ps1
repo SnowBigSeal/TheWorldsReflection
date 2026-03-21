@@ -1,8 +1,10 @@
 # deploy-mods.ps1
 # Builds each custom mod with Gradle, then copies the resulting JAR into the modpack's mods/ folder.
+# Also syncs config/ and datapacks/ from this repo into the fracturedworlds dev run folder.
 
 $scriptDir = $PSScriptRoot
 $modsDir   = Join-Path $scriptDir "mods"
+$runDir    = [System.IO.Path]::GetFullPath((Join-Path $scriptDir "..\fracturedworlds\run"))
 
 $modProjects = @(
     "..\hostilemobscore",
@@ -61,4 +63,18 @@ if ($anyFailed) {
     Write-Host ""
     Write-Warning "One or more mods failed to build or were skipped."
     exit 1
+}
+
+# Sync config/ and datapacks/ into the dev run folder
+if (Test-Path $runDir) {
+    foreach ($folder in @("config", "datapacks")) {
+        $src = Join-Path $scriptDir $folder
+        $dst = Join-Path $runDir $folder
+        if (Test-Path $src) {
+            Copy-Item -Path "$src\*" -Destination $dst -Recurse -Force
+            Write-Host "Synced $folder\ -> run\$folder\" -ForegroundColor Cyan
+        }
+    }
+} else {
+    Write-Warning "Run folder not found at $runDir — skipping config/datapack sync"
 }
